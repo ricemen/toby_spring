@@ -3,10 +3,26 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="connectionMaker" class="springbook.user.dao.MConnectionMaker" />
+	<bean id="MysqlDataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost/study" />
+		<property name="username" value="ricemen" />
+		<property name="password" value="-1010232" />
+	</bean>
 	
+	<bean id="H2DataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="org.h2.Driver" />
+		<property name="url" value="jdbc:h2:~/test" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean>	
+
+<!-- 
+	<bean id="connectionMaker" class="springbook.user.dao.MConnectionMaker" />
+-->	
+
 	<bean id="userDao" class="springbook.user.dao.UserDao">
-		<property name="connectionMaker" ref="connectionMaker" />
+		<property name="dataSource" ref="H2DataSource" />
 	</bean>
 
 </beans>

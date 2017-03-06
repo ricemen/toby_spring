@@ -9,8 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
-import com.sun.glass.ui.Application;
-
 import springbook.user.domain.User;
 
 /**
@@ -29,7 +27,7 @@ public class UserDaoTest {
 //		System.out.println(user2);
 		
 //		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+//		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
 		
 //		UserDao user3 = context.getBean("userDao", UserDao.class);	
 //		UserDao user4 = context.getBean("userDao", UserDao.class);	
@@ -37,11 +35,14 @@ public class UserDaoTest {
 //		System.out.println(user3);
 //		System.out.println(user4);
 		
+//		UserDao dao = context.getBean("userDao", UserDao.class);
+		
+//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
 		UserDao dao = context.getBean("userDao", UserDao.class);
-		
-		
+
 		User user = new User();
-		user.setId("ricemen9");
+		user.setId("ricemen14");
 		user.setName("조원석9");
 		user.setPassword("cho9");
 		
@@ -51,6 +52,15 @@ public class UserDaoTest {
 		
 		User user2 = dao.get(user.getId());
 		System.out.println(user2.getId() + " 조회 성공");
+		
+		if(!user.getName().equals(user2.getName())) {
+			System.out.println("테스트 실패 (name)");
+		} else if(!user.getPassword().equals(user2.getPassword())) {
+			System.out.println("테스트 실패 (getPassword)");
+		} else {
+			System.out.println("테스트 성공");
+		}
+		
 		System.out.println(user2.toString());		
 		
 	}

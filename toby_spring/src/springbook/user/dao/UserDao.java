@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import springbook.user.domain.User;
 
 /**
@@ -16,27 +18,15 @@ import springbook.user.domain.User;
  */
 public class UserDao {
 	
-	/**
-	 * 스프링이 관리하는 빈으로 
-	 */
-	private ConnectionMaker connectionMaker; // 관계설정에 대한 관심이 남아있다
-
+	private DataSource dataSource;
 	
-	public void setConnectionMaker(ConnectionMaker connectionMaker) {
-		this.connectionMaker = connectionMaker;
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
-	
-	/**
-	 * 생성자
-	 * @param connectionMaker
-	 */
-//	public UserDao(ConnectionMaker connectionMaker) {
-//		this.connectionMaker = connectionMaker;
-//	}
-	
-	
-	public void add(User user) throws ClassNotFoundException, SQLException {
-		Connection c = connectionMaker.makeConnection();		
+
+	public void add(User user) throws SQLException {
+		
+		Connection c = this.dataSource.getConnection();	
 		
 		PreparedStatement ps = c.prepareStatement(" insert into users(id, name, password) values(?, ?, ?) ");
 		ps.setString(1, user.getId());
@@ -48,8 +38,8 @@ public class UserDao {
 		c.close();
 	}
 
-	public User get(String id) throws ClassNotFoundException, SQLException {
-		Connection c = connectionMaker.makeConnection();
+	public User get(String id) throws SQLException {
+		Connection c = this.dataSource.getConnection();
 		
 		PreparedStatement ps = c.prepareStatement(" select * from users where id = ? ");
 		ps.setString(1, id);
