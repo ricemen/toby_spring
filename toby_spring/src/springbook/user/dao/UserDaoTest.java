@@ -3,11 +3,15 @@
  */
 package springbook.user.dao;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.sql.SQLException;
 
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import springbook.user.domain.User;
 
@@ -17,72 +21,62 @@ import springbook.user.domain.User;
  */
 public class UserDaoTest {
 	
-	public static void main(String[] args) throws ClassNotFoundException, SQLException {
-//		
-//		DaoFactory factory = new DaoFactory();
-//		UserDao user1 = factory.userDao();
-//		UserDao user2 = factory.userDao();
-//		
-//		System.out.println(user1);
-//		System.out.println(user2);
-		
-//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-//		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-		
-//		UserDao user3 = context.getBean("userDao", UserDao.class);	
-//		UserDao user4 = context.getBean("userDao", UserDao.class);	
-//		
-//		System.out.println(user3);
-//		System.out.println(user4);
-		
-//		UserDao dao = context.getBean("userDao", UserDao.class);
-		
-//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+	@Test
+	public void addAndGet() throws SQLException {
 		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
 		UserDao dao = context.getBean("userDao", UserDao.class);
-
-		User user = new User();
-		user.setId("ricemen14");
-		user.setName("조원석9");
-		user.setPassword("cho9");
 		
-		dao.add(user);
+		User user1 = new User("wonseok", "조원석", "cho");
+		User user2 = new User("leejieun", "이지은", "lee");
 		
-		System.out.println(user.getId() + " 등록 성공");
+		dao.deleteAll();
+		assertThat(dao.getCount(), is(0));
 		
-		User user2 = dao.get(user.getId());
-		System.out.println(user2.getId() + " 조회 성공");
+		dao.add(user1);
+		dao.add(user2);
+		assertThat(dao.getCount(), is(2));
 		
-		if(!user.getName().equals(user2.getName())) {
-			System.out.println("테스트 실패 (name)");
-		} else if(!user.getPassword().equals(user2.getPassword())) {
-			System.out.println("테스트 실패 (getPassword)");
-		} else {
-			System.out.println("테스트 성공");
-		}
+		User userget1 = dao.get(user1.getId());
+		assertThat(userget1.getName(), is(user1.getName()));
+		assertThat(userget1.getPassword(), is(user1.getPassword()));
 		
-		System.out.println(user2.toString());		
+		User userget2 = dao.get(user2.getId());
+		assertThat(userget2.getName(), is(user2.getName()));
+		assertThat(userget2.getPassword(), is(user2.getPassword()));
+	}
+	
+	@Test
+	public void count() throws SQLException {
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+		UserDao dao = context.getBean("userDao", UserDao.class);
+		
+		User user1 = new User("wonseok", "조원석", "cho");
+		User user2 = new User("leejieun", "이지은", "lee");
+		User user3 = new User("younseo", "조윤서", "cho");
+		
+		dao.deleteAll();
+		assertThat(dao.getCount(), is(0));
+		
+		dao.add(user1);
+		assertThat(dao.getCount(), is(1));
+		
+		dao.add(user2);
+		assertThat(dao.getCount(), is(2));
+		
+		dao.add(user3);
+		assertThat(dao.getCount(), is(3));
 		
 	}
 	
-//	public static void main2(String[] args) throws ClassNotFoundException, SQLException {
-//		
-//		ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-//		UserDao dao = context.getBean("userDao", UserDao.class);
-//		
-////		UserDao dao = new DaoFactory().userDao();
-//		
-//		User user = new User();
-//		user.setId("ricemen7");
-//		user.setName("조원석7");
-//		user.setPassword("cho6");
-//		
-//		dao.add(user);
-//		
-//		System.out.println(user.getId() + " 등록 성공");
-//		
-//		User user2 = dao.get(user.getId());
-//		System.out.println(user2.getId() + " 조회 성공");
-//		System.out.println(user2.toString());
-//	}
+	@Test(expected=EmptyResultDataAccessException.class)
+	public void getUserFailure() throws SQLException {
+		ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+		UserDao dao = context.getBean("userDao", UserDao.class);
+		
+		dao.deleteAll();
+		assertThat(dao.getCount(), is(0));
+		
+		dao.get("unknow_id");
+	}
+	
 }
