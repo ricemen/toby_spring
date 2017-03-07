@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.theories.suppliers.TestedOn;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -44,12 +45,6 @@ public class UserDaoTest {
 	
 	@Before
 	public void setUp() {
-		
-//		dao = new UserDao();
-//		
-//		DataSource dataSource = new SingleConnectionDataSource("jdbc:h2:~/spring", "spring", "book", true);
-//		dao.setDataSource(dataSource);
-		
 		this.user1 = new User("wonseok", "조원석", "cho");
 		this.user2 = new User("leejieun", "이지은", "lee");
 		this.user3 = new User("younseo", "조윤서", "cho");
@@ -76,6 +71,7 @@ public class UserDaoTest {
 	
 	@Test
 	public void count() throws SQLException {
+		
 		dao.deleteAll();
 		assertThat(dao.getCount(), is(0));
 		
@@ -92,10 +88,11 @@ public class UserDaoTest {
 	
 	@Test(expected=EmptyResultDataAccessException.class)
 	public void getUserFailure() throws SQLException {
+		
 		dao.deleteAll();
+		
 		assertThat(dao.getCount(), is(0));
 		
 		dao.get("unknow_id");
 	}
-	
 }

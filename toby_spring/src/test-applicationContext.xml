@@ -19,7 +19,12 @@
 
 <!-- 
 	<bean id="connectionMaker" class="springbook.user.dao.MConnectionMaker" />
--->	
+
+
+	<bean id="jdbcContext" class="springbook.user.dao.JdbcContext">
+		<property name="dataSource" ref="H2DataSource"></property>
+	</bean>
+	-->	
 
 	<bean id="userDao" class="springbook.user.dao.UserDao">
 		<property name="dataSource" ref="H2DataSource" />
