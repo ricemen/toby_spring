@@ -8,12 +8,15 @@ import static org.junit.Assert.assertThat;
 
 import java.sql.SQLException;
 
+import javax.sql.DataSource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -24,9 +27,11 @@ import springbook.user.domain.User;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/applicationContext.xml")
+@ContextConfiguration(locations="/test-applicationContext.xml")
+//@DirtiesContext
 public class UserDaoTest {
 	
+// 	@ContextConfiguration(locations="/applicationContext.xml") 에 의해 ApplicationContext 도 빈으로 자동 등록된다
 //	@Autowired
 //	private ApplicationContext context;
 	
@@ -39,6 +44,12 @@ public class UserDaoTest {
 	
 	@Before
 	public void setUp() {
+		
+//		dao = new UserDao();
+//		
+//		DataSource dataSource = new SingleConnectionDataSource("jdbc:h2:~/spring", "spring", "book", true);
+//		dao.setDataSource(dataSource);
+		
 		this.user1 = new User("wonseok", "조원석", "cho");
 		this.user2 = new User("leejieun", "이지은", "lee");
 		this.user3 = new User("younseo", "조윤서", "cho");
