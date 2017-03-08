@@ -134,6 +134,24 @@ public class UserDaoTest {
 		checkSameUser(user3, users3.get(2));		
 	}
 	
+	@Test
+	public void update() {
+		dao.deleteAll();
+		dao.add(user1);
+		dao.add(user2);
+		user1.setName("Á¶¿øÃ¶");
+		user1.setPassword("cwc");
+		user1.setLevel(Level.GOLD);
+		user1.setLogin(1000);
+		user1.setRecommend(999);
+		dao.update(user1);
+		
+		User userupdate = dao.get(user1.getId());
+		checkSameUser(userupdate, user1);
+		User userget2 = dao.get(user2.getId());
+		checkSameUser(userget2, user2);
+	}
+	
 	@Test(expected=DataAccessException.class)
 	public void duplicateKey() {
 		dao.deleteAll();
