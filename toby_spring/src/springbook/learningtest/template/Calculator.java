@@ -24,55 +24,56 @@ public class Calculator {
 		}
 	}
 	
+	public <T> T lineReadTemplate(String filepath, LineCallback<T> callback, T initVal) throws IOException {
+		BufferedReader br = null;
+		try {
+			
+			br = new BufferedReader(new FileReader(filepath));
+			
+			T res = initVal;
+			String line = null;
+			
+			while((line = br.readLine()) != null) {
+				res = callback.doSomethingWithLine(line, res);
+			}
+			
+			return res;	
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			throw e;
+		} finally {
+			if(br != null) try{ br.close(); } catch (Exception e) { System.out.println(e.getMessage()); }
+		}
+	}
+	
 	public Integer calcMultiply(String filepath) throws IOException {
-		BufferedReaderCallback sumCallback = new BufferedReaderCallback() {
+		LineCallback<Integer> sumCallback = new LineCallback<Integer>() {
 			@Override
-			public Integer doSomethingWithReader(BufferedReader br) throws IOException {
-				Integer sum = 0;
-				String line = null;
-				
-				while((line = br.readLine()) != null) {
-					sum *= Integer.valueOf(line);
-				}
-				return sum;	
+			public Integer doSomethingWithLine(String line, Integer value) {
+				return value * Integer.valueOf(line);
 			}
 		};
-		return fileReadTemplate(filepath, sumCallback);
+		return lineReadTemplate(filepath, sumCallback, 1);
 	}
 
 	public Integer calcSum(String filepath) throws IOException {
-		
-		BufferedReaderCallback sumCallback = new BufferedReaderCallback() {
+		LineCallback<Integer> multiplyCallback = new LineCallback<Integer>() {
 			@Override
-			public Integer doSomethingWithReader(BufferedReader br) throws IOException {
-				Integer sum = 0;
-				String line = null;
-				
-				while((line = br.readLine()) != null) {
-					sum += Integer.valueOf(line);
-				}
-				return sum;	
+			public Integer doSomethingWithLine(String line, Integer value) {
+				return value + Integer.valueOf(line); 
 			}
 		};
 		
-		return fileReadTemplate(filepath, sumCallback);
-		
-//		BufferedReader br = null;
-//		try {
-//			br = new BufferedReader(new FileReader(filepath));
-//			Integer sum = 0;
-//			String line = null;
-//			
-//			while((line = br.readLine()) != null) {
-//				sum += Integer.valueOf(line);
-//			}
-//			
-//			return sum;	
-//		} catch (Exception e) {
-//			System.out.println(e.getMessage());
-//			throw e;
-//		} finally {
-//			if(br != null) try{ br.close(); } catch (Exception e) { System.out.println(e.getMessage()); }
-//		}
+		return lineReadTemplate(filepath, multiplyCallback, 0);
+	}
+	
+	public String addString(String filepath) throws IOException {
+		LineCallback<String> strCallback = new LineCallback<String>() {
+			@Override
+			public String doSomethingWithLine(String line, String value) {
+				return value + "" + line;
+			}
+		};
+		return lineReadTemplate(filepath, strCallback, "");
 	}
 }

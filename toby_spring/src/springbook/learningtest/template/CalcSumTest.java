@@ -22,14 +22,19 @@ public class CalcSumTest {
 	@Test
 	public void sumOfNumbers() throws IOException {
 		int sum = calculator.calcSum(numFilepath);
-		System.out.println("sum : " + sum);
-		assertThat(sum, is(15));
+		assertThat(sum, is(10));
 	}
 	
 	@Test 
 	public void multiplyOfNumbers() throws IOException {
 		int sum = calculator.calcMultiply(numFilepath);
-		System.out.println("sum : " + sum);
-		assertThat(sum, is(120));
+		assertThat(sum, is(24));
 	}
+	
+	
+	@Test 
+	public void addStringOfNumbers() throws IOException {
+		String sum = calculator.addString(numFilepath);
+		assertThat(sum, is("1234"));
+	}	
 }
