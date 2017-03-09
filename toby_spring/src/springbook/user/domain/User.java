@@ -10,6 +10,7 @@ package springbook.user.domain;
 public class User {
 	String id;
 	String name;
+	String email;
 	String password;
 	Level level;
 	int login;
@@ -18,16 +19,16 @@ public class User {
 	public User() {
 		super();
 	}
-	public User(String id, String name, String password, Level level, int login, int recommend) {
+	public User(String id, String name, String email, String password, Level level, int login, int recommend) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.email = email;
 		this.password = password;
 		this.level = level;
 		this.login = login;
 		this.recommend = recommend;
 	}
-
 	public String getId() {
 		return id;
 	}
@@ -39,6 +40,12 @@ public class User {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getPassword() {
 		return password;
@@ -74,10 +81,9 @@ public class User {
 			setLevel(nextLevel);
 		}
 	}
-	
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", password=" + password + ", level=" + level + ", login=" + login
-				+ ", recommend=" + recommend + "]";
+		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", level=" + level
+				+ ", login=" + login + ", recommend=" + recommend + "]";
 	}
 }
