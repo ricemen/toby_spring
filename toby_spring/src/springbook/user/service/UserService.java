@@ -12,6 +12,9 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -29,6 +32,8 @@ public class UserService {
 	
 	private PlatformTransactionManager transactionManager;
 	
+	private MailSender mailSender;
+	
 	private UserLevelUpgradePolicy userLevelUpgradePolicy;
 
 	public void setUserDao(UserDao userDao) {
@@ -37,6 +42,10 @@ public class UserService {
 
 	public void setUserLevelUpgradePolicy(UserLevelUpgradePolicy userLevelUpgradePolicy) {
 		this.userLevelUpgradePolicy = userLevelUpgradePolicy;
+	}
+
+	public void setMailSender(MailSender mailSender) {
+		this.mailSender = mailSender;
 	}
 
 	public void setTransactionManager(PlatformTransactionManager transactionManager) {
@@ -94,29 +103,43 @@ public class UserService {
 		userDao.update(user);
 		sendUpgradeEMail(user);
 	}
-
+	
 	private void sendUpgradeEMail(User user) {
-		Properties props = new Properties();
-		props.put("mail.smtp.host", "mail.gmail.com");
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(user.getEmail());
+		mailMessage.setFrom("admin@server.com");
+		mailMessage.setSubject("Upgrade 안내");
+		mailMessage.setText("사용자 등급이 " + user.getLevel() +" 로 업그레이드 되었습니다.");
 		
-		Session s = Session.getInstance(props, null);
-		
-		MimeMessage message = new MimeMessage(s);
-		
-		try {
-			message.setFrom(new InternetAddress("wonseokcho@postvisual.com"));
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
-			message.setSubject("Upgrade 안내");
-			message.setText("사용자 등급이 " + user.getLevel() +" 로 업그레이드 되었습니다.");
-			
-			Transport.send(message);
-		} catch (AddressException e) {
-			throw new RuntimeException(e);
-		} catch (MessagingException e) {
-			throw new RuntimeException(e);
-//		} catch (UnsupportedEncodingException e) {
+		mailSender.send(mailMessage);
+	}
+
+	/**
+	 * 실제 사용시만 가능
+	 * 테스트는 힘듬
+	 */
+//	private void sendUpgradeEMail(User user) {
+//		Properties props = new Properties();
+//		props.put("mail.smtp.host", "mail.gmail.com");
+//		
+//		Session s = Session.getInstance(props, null);
+//		
+//		MimeMessage message = new MimeMessage(s);
+//		
+//		try {
+//			message.setFrom(new InternetAddress("wonseokcho@postvisual.com"));
+//			message.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
+//			message.setSubject("Upgrade 안내");
+//			message.setText("사용자 등급이 " + user.getLevel() +" 로 업그레이드 되었습니다.");
+//			
+//			Transport.send(message);
+//		} catch (AddressException e) {
 //			throw new RuntimeException(e);
-		}
-		
-	}	
+//		} catch (MessagingException e) {
+//			throw new RuntimeException(e);
+////		} catch (UnsupportedEncodingException e) {
+////			throw new RuntimeException(e);
+//		}
+//		
+//	}	
 }
