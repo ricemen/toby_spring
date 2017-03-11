@@ -11,8 +11,12 @@ import static org.mockito.Mockito.when;
 import static springbook.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.UserServiceImpl.MIN_RECCOMMENT_FOR_GOLD;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -20,7 +24,7 @@ import javax.sql.DataSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
@@ -71,6 +75,7 @@ public class UserServiceTest {
 		);
 	}
 	
+	@Test
 	public void mockUpgradeLevels() {
 		UserServiceImpl userServiceImpl = new UserServiceImpl();
 		
@@ -87,9 +92,15 @@ public class UserServiceTest {
 		verify(mockUserDao, times(2)).update(any(User.class));
 		verify(mockUserDao, times(2)).update(any(User.class));
 		verify(mockUserDao).update(users.get(1));
-		checkUserAndLevel(users.get(0), "joytouch", Level.SILVER);
-		verify(mockUserDao).update(users.get(1));
-		checkUserAndLevel(users.get(1), "madnite1", Level.GOLD);
+		assertThat(users.get(1).getLevel(), is(Level.SILVER));
+		verify(mockUserDao).update(users.get(3));
+		assertThat(users.get(3).getLevel(), is(Level.GOLD));
+		
+		ArgumentCaptor<SimpleMailMessage> mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage.class);
+		verify(mockMailSender, times(2)).send(mailMessageArg.capture());
+		List<SimpleMailMessage> mailMessage = mailMessageArg.getAllValues();
+		assertThat(mailMessage.get(0).getTo()[0] , is(users.get(1).getEmail()));
+		assertThat(mailMessage.get(1).getTo()[0] , is(users.get(3).getEmail()));
 		
 		
 	}
@@ -213,6 +224,7 @@ public class UserServiceTest {
 	private void checkLevel(User user, Level exectedLevel) {
 		User userUpdate = userDao.get(user.getId());
 		assertThat(userUpdate.getLevel(), is(exectedLevel));
+		
 	}
 	
 	static class MockMailSender implements MailSender {
