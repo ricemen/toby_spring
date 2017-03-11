@@ -17,9 +17,14 @@ public class ProxyTest {
 	
 	@Test
 	public void proxyTest() {
-		Hello hello = new HelloUppercase(new HelloTarget());
-		assertThat(hello.sayHello("wonseok"), is("HELLO WONSEOK"));
-		assertThat(hello.sayHi("wonseok"), is("HI WONSEOK"));
-		assertThat(hello.sayThankYou("wonseok"), is("THANK U WONSEOK"));
+//		Hello hello = new HelloUppercase(new HelloTarget());
+//		assertThat(hello.sayHello("wonseok"), is("HELLO WONSEOK"));
+//		assertThat(hello.sayHi("wonseok"), is("HI WONSEOK"));
+//		assertThat(hello.sayThankYou("wonseok"), is("THANK U WONSEOK"));
+		
+//		Hello proxiedHello = (Hello)Proxy.newProxyInstance(
+//				getClass().getClassLoader()
+//				, new Class[] {Hello.class}
+//				, new UppercaseHandler(new HelloTarget()));
 	}
 }

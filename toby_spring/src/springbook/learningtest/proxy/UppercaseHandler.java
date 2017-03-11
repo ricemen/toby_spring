@@ -3,11 +3,11 @@ package springbook.learningtest.proxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-public class HelloUppercase implements InvocationHandler {
-	
+public class UppercaseHandler implements InvocationHandler {
+
 	Hello target;
 
-	public HelloUppercase(Hello target) {
+	public UppercaseHandler(Hello target) {
 		super();
 		this.target = target;
 	}
@@ -17,5 +17,4 @@ public class HelloUppercase implements InvocationHandler {
 		String ret = (String)method.invoke(target, args);
 		return ret.toUpperCase();
 	}
-
 }
