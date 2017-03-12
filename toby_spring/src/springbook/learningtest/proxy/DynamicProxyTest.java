@@ -27,12 +27,39 @@ public class DynamicProxyTest {
 				new Class[] { Hello.class },		//  구현 클래스(HelloTarget)를 만들어준다.
 				new UppercaseHandler(new HelloTarget())
 				);
-		
 		assertThat(proxyedHello.sayHello("Toby"), is("HELLO TOBY"));
 		assertThat(proxyedHello.sayHi("Toby"), is("HI TOBY"));
 		assertThat(proxyedHello.sayThankYou("Toby"), is("THANK U TOBY"));
 	}
+	
+	/**
+	 * 
+	 * @author wonseok
+	 */
+	static class UppercaseHandler implements InvocationHandler {
+		Object target;
 
+		private UppercaseHandler(Object target) {
+			this.target = target;
+		}
+
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			Object ret = method.invoke(target, args); // 위임
+//			if(ret instanceof String) {
+//				return ((String)ret).toUpperCase();
+//			} else {
+//				return ret;
+//			}
+//			return ((String)ret).toUpperCase();
+			if (ret instanceof String && method.getName().startsWith("say")) {
+				return ((String)ret).toUpperCase();
+			}
+			else {
+				return ret;
+			}
+		}
+	}
 	static class HelloUppercase implements Hello {
 		Hello hello;
 		
@@ -52,28 +79,6 @@ public class DynamicProxyTest {
 			return hello.sayThankYou(name).toUpperCase();
 		}
 		
-	}
-	/**
-	 * 
-	 * @author wonseok
-	 */
-	static class UppercaseHandler implements InvocationHandler {
-		Object target;
-
-		private UppercaseHandler(Object target) {
-			this.target = target;
-		}
-
-		public Object invoke(Object proxy, Method method, Object[] args)
-				throws Throwable {
-			Object ret = method.invoke(target, args);
-			if (ret instanceof String && method.getName().startsWith("say")) {
-				return ((String)ret).toUpperCase();
-			}
-			else {
-				return ret;
-			}
-		}
 	}
 	/**
 	 * 타깃
