@@ -16,37 +16,61 @@
 		<property name="username" value="spring" />
 		<property name="password" value="book" />
 	</bean>	
+	
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 
 	<bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
 	<!-- 
+		일반 tx
 	<bean id="userService" class="springbook.user.service.UserServiceTx">
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="userService" ref="userServiceImpl" />
 	</bean>
-	 -->
-	 
+	
+	 	프록시 팩토리 빈
 	<bean id="userService" class="springbook.user.service.TxProxyFactoryBean">
 		<property name="target" ref="userServiceImpl"></property>
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="pattern" value="upgradeLevels" />
 		<property name="serviceInterface" value="springbook.user.service.UserService" />
 	</bean>	 
+	 -->
+	 
+	<bean id="userService" class="springbook.user.service.UserServiceImpl">
+		<property name="userDao" ref="userDao" />
+		<property name="mailSender" ref="mailSender" />
+	</bean>
 	
+	<bean id="testUserService" class="springbook.user.service.UserServiceTest$TestUserServiceImpl" parent="userService" />
+		 	
 	<bean id="userServiceImpl" class="springbook.user.service.UserServiceImpl">
 		<property name="userDao" ref="userDao" />
 		<property name="mailSender" ref="mailSender" />
 	</bean>
 	
+	<bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+		<property name="advice" ref="transactionAdvice"></property>
+		<property name="pointcut" ref="transactionPointcut"></property>
+		
+	</bean>
+	
+	<bean id="transactionAdvice" class="springbook.learningtest.proxy.TransctionAdvice">
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+	
+	<bean id="transactionPointcut" class="springbook.learningtest.proxy.NameMatchClassMethodPointcut">
+		<property name="mappedClassName" value="*ServiceImpl"></property>
+		<property name="mappedName" value="upgrade*"></property>
+	</bean>
 	
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
-	<bean id="mailSender" class="springbook.user.service.DummyMailSender">
-	</bean>
+	<bean id="mailSender" class="springbook.user.service.DummyMailSender" />
 	
 	
 	<bean id="userLevelUpgradePolicy" class="springbook.user.service.NormalUserLevelUpgrade">
