@@ -158,6 +158,11 @@ public class UserServiceTest {
 	}
 	
 	@Test
+	public void advisorAutoProxyCreator() {
+		assertThat(testUserService, is(java.lang.reflect.Proxy.class));
+	}
+	
+	@Test
 //	@DirtiesContext
 	public void upgradeAllOrNoting() throws Exception {
 /*		TestUserServiceImpl testUserService = new TestUserServiceImpl(users.get(3).getId());
