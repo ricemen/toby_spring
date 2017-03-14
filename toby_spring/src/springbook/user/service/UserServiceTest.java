@@ -204,7 +204,7 @@ public class UserServiceTest {
 	}
 	
 	
-	static class TestUserServiceImpl extends UserServiceImpl {
+	static class TestUserService extends UserServiceImpl {
 		
 		private String id = "madnite1";
 /*
@@ -228,7 +228,6 @@ public class UserServiceTest {
 	
 	private void checkLevelUpgrade(User user, boolean upgraded) {
 		User userUpdate = userDao.get(user.getId());
-		System.out.println(userUpdate);
 		
 		if(upgraded) {
 			assertThat(userUpdate.getLevel(), is(user.getLevel().nextLevel()));

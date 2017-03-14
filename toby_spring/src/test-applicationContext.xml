@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<bean id="MysqlDataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
 		<property name="driverClass" value="com.mysql.jdbc.Driver" />
@@ -16,6 +18,11 @@
 		<property name="username" value="spring" />
 		<property name="password" value="book" />
 	</bean>	
+	
+	<aop:config>
+		<aop:pointcut expression="execution(* *..*ServiceImpl .upgrade*(..))" id="transactionPointcut"/>
+		<aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointcut"/>
+	</aop:config>
 	
 	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 
@@ -44,7 +51,7 @@
 		<property name="mailSender" ref="mailSender" />
 	</bean>
 	
-	<bean id="testUserService" class="springbook.user.service.UserServiceTest$TestUserServiceImpl" parent="userService" />
+	<bean id="testUserService" class="springbook.user.service.UserServiceTest$TestUserService" parent="userService" />
 		 	
 	<bean id="userServiceImpl" class="springbook.user.service.UserServiceImpl">
 		<property name="userDao" ref="userDao" />
