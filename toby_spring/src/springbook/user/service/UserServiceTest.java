@@ -21,12 +21,16 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
@@ -203,6 +207,54 @@ public class UserServiceTest {
 		
 	}
 	
+	@Test(expected=TransientDataAccessResourceException.class)
+	public void readOnlyTransactionAttribute() {
+		testUserService.getAll();
+	}
+	
+	@Test
+	public void transactionSyncRollbackTest() {
+		
+		DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition(); // 기본값
+		TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+		
+		try {
+			userDao.deleteAll();
+			assertThat(userDao.getCount(), is(0));
+			userService.add(users.get(0));
+			userService.add(users.get(1));
+			assertThat(userDao.getCount(), is(2));
+		} 
+		finally {
+			transactionManager.rollback(txStatus);
+		}
+		assertThat(userDao.getCount(), is(0));
+		
+	}
+	@Test
+	@Transactional
+	public void transactionSync() {
+		
+//		DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition(); // 기본값
+//		txDefinition.setReadOnly(true);
+//		TransactionStatus status = transactionManager.getTransaction(txDefinition);
+		
+		userService.deleteAll();
+//		userDao.deleteAll();
+//		assertThat(userDao.getCount(), is(0));
+//		
+//		DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition(); // 기본값
+//		//txDefinition.setReadOnly(true);
+//		TransactionStatus status = transactionManager.getTransaction(txDefinition);
+//		
+		userService.add(users.get(0));
+		userService.add(users.get(1));
+//		assertThat(userDao.getCount(), is(2));
+//				
+//		transactionManager.commit(status);
+//		
+//		assertThat(userDao.getCount(), is(2));
+	}
 	
 	static class TestUserService extends UserServiceImpl {
 		
@@ -215,6 +267,13 @@ public class UserServiceTest {
 		protected void upgradeLevel(User user) {
 			if(user.getId().equals(id)) throw new TestUserServiceException();
 			super.upgradeLevel(user);
+		}
+		
+		public List<User> getAll() {
+			for(User user : super.getAll()) {
+				super.update(user);
+			}
+			return null;
 		}
 	}
 	

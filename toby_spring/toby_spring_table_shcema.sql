@@ -6,5 +6,5 @@ create table users(
 	level tinyint(3) not null, 
 	login int(3) not null, 
 	recommend int(3) not null
-)
+)  ENGINE=InnoDB;
 

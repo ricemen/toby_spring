@@ -157,19 +157,19 @@ public class UserDaoTest {
 		dao.add(user1);
 	}
 	
-	@Test
-	public void sqlExceptionTranslate() {
-		dao.deleteAll();
-		
-		try {
-			dao.add(user1);
-			dao.add(user1);
-		} catch(DuplicateKeyException ex) {
-			SQLException sqlEx = (SQLException) ex.getRootCause();
-			SQLExceptionTranslator set = new SQLErrorCodeSQLExceptionTranslator(dataSource);
-			assertThat(set.translate(null, null, sqlEx), is(DuplicateKeyException.class));
-		}
-	}
+//	@Test
+//	public void sqlExceptionTranslate() {
+//		dao.deleteAll();
+//		
+//		try {
+//			dao.add(user1);
+//			dao.add(user1);
+//		} catch(DuplicateKeyException ex) {
+//			SQLException sqlEx = (SQLException) ex.getRootCause();
+//			SQLExceptionTranslator set = new SQLErrorCodeSQLExceptionTranslator(dataSource);
+//			assertThat(set.translate(null, null, sqlEx), is(DuplicateKeyException.class));
+//		}
+//	}
 	
 	
 	

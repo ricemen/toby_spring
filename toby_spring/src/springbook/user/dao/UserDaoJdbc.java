@@ -6,6 +6,7 @@ package springbook.user.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -22,6 +23,8 @@ import springbook.user.domain.User;
 public class UserDaoJdbc implements UserDao {
 
 	private JdbcTemplate jdbcTemplate;
+	
+	private Map<String, String> sqlMap;
 	
 	private RowMapper<User> userMapper = new RowMapper<User>() {
 
@@ -44,30 +47,34 @@ public class UserDaoJdbc implements UserDao {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
+	public void setSqlMap(Map<String, String> sqlMap) {
+		this.sqlMap = sqlMap;
+	}
+
 	public void add(final User user) {
-		this.jdbcTemplate.update("insert into users(id, name, email, password, level, login, recommend) values(?, ?, ?, ?, ?, ?, ?)"
-				, user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend());
+/*		this.jdbcTemplate.update("insert into users(id, name, email, password, level, login, recommend) values(?, ?, ?, ?, ?, ?, ?)"
+				, user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend());*/
+		this.jdbcTemplate.update(this.sqlMap.get("add"), user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend());		
 	}
 
 	public User get(String id) {
-		return this.jdbcTemplate.queryForObject("select * from users where id = ? ", new Object[] {id}, userMapper);
+		return this.jdbcTemplate.queryForObject(this.sqlMap.get("get"), new Object[] {id}, userMapper);
 	}
 	
 	public List<User> getAll() {
-		return this.jdbcTemplate.query("select * from users order by id", userMapper);
+		return this.jdbcTemplate.query(this.sqlMap.get("getAll"), userMapper);
 	}
 	
 	public void deleteAll() {
-		this.jdbcTemplate.update("delete from users");
+		this.jdbcTemplate.update(this.sqlMap.get("deleteAll"));
 	}
 	
 	public int getCount() {
-		return this.jdbcTemplate.queryForInt("select count(*) from users");
+		return this.jdbcTemplate.queryForInt(this.sqlMap.get("getCount"));
 	}
 
 	@Override
 	public void update(User user) {
-		this.jdbcTemplate.update("update users set name =?, email=?, password=?, level=?, login=?, recommend=? where id= ?"
-				, user.getName(), user.getEmail(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getId());
+		this.jdbcTemplate.update(this.sqlMap.get("update") , user.getName(), user.getEmail(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getId());
 	}
 }
