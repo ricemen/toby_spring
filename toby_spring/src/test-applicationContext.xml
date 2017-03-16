@@ -3,7 +3,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
@@ -23,12 +25,13 @@
 	
 	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 	
-	
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="MysqlDataSource"></property>
 	</bean>	
 
 	<tx:annotation-driven />
+	
+	<context:annotation-config />
 
 <!-- 	
 	<aop:config>
@@ -41,9 +44,36 @@
 			<tx:method name="*" />
 		</tx:attributes> 
 	</tx:advice>	
+
+ 
+ 
+ 	<bean id="sqlService" class="springbook.user.sqlservice.DefaultSqlService" />
  -->
+ 
+ 	<bean id="sqlService" class="springbook.user.sqlservice.OxmSqlService">
+ 		<property name="unmarshaller" ref="unmarshaller" />
+ 	</bean>
+ 	
+ 	<bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+ 		<property name="contextPath" value="springbook.user.sqlservice.jaxb" />
+ 	</bean> 	
+  	
+ 	<!--  
+ 	<bean id="sqlService" class="springbook.user.sqlservice.BaseSqlService">
+ 		<property name="sqlReader" ref="sqlReader" />	
+ 		<property name="sqlRegistry" ref="sqlRegistry" /> 		
+ 	</bean>
+ 	
+ 	<bean id="sqlRegistry" class="springbook.user.sqlservice.HashMapSqlRegistry" />
+ 	<bean id="sqlReader" class="springbook.user.sqlservice.JaxbXmlSqlReader">
+ 		<property name="sqlMapFile" value="sqlmap.xml" />
+ 	</bean>
+ 	-->
+ 	
 	<bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
 		<property name="dataSource" ref="MysqlDataSource" />
+		<property name="sqlService" ref="sqlService" />
+		<!-- 
 		<property name="sqlMap">
 			<map>
 				<entry key="add" value="insert into users(id, name, email, password, level, login, recommend) values(?, ?, ?, ?, ?, ?, ?)" />
@@ -54,6 +84,7 @@
 				<entry key="update" value="update users set name =?, email=?, password=?, level=?, login=?, recommend=? where id= ?" />
 			</map>
 		</property>
+		 -->
 	</bean>
 	
 	<!-- 
