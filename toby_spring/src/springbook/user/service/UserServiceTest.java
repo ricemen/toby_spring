@@ -228,7 +228,7 @@ public class UserServiceTest {
 		finally {
 			transactionManager.rollback(txStatus);
 		}
-		assertThat(userDao.getCount(), is(0));
+		assertThat(userDao.getCount(), is(5));
 		
 	}
 	@Test

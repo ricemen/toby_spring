@@ -52,7 +52,11 @@
  
  	<bean id="sqlService" class="springbook.user.sqlservice.OxmSqlService">
  		<property name="unmarshaller" ref="unmarshaller" />
+ 		<property name="sqlmap" value="classpath:springbook/user/dao/sqlmap.xml" />
+ 		<property name="sqlRegistry" ref="sqlRegistry"></property>
  	</bean>
+ 	
+ 	<bean id="sqlRegistry" class="springbook.user.sqlservice.ConCurrentHashMapSqlRegistry" />
  	
  	<bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
  		<property name="contextPath" value="springbook.user.sqlservice.jaxb" />
