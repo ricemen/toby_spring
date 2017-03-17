@@ -26,7 +26,7 @@ public class ConCurrentHashMapSqlRegistry implements UpdatableSqlRegistry {
 	}
 
 	@Override
-	public void updateDql(Map<String, String> sqlmap) throws SqlUpdateFailureException {
+	public void updateSql(Map<String, String> sqlmap) throws SqlUpdateFailureException {
 		for(Map.Entry<String, String> entry : sqlmap.entrySet()) {
 			updateSql(entry.getKey(), entry.getValue());
 		}

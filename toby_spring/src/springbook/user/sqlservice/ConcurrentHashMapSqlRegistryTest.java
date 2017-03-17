@@ -1,16 +1,13 @@
 package springbook.user.sqlservice;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+public class ConcurrentHashMapSqlRegistryTest extends AbstractConcurrentHashMapSqlRegistryTest {
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
-public class ConcurrentHashMap {
+	@Override
+	protected UpdatableSqlRegistry createUpdatatableSqlRegistry() {
+		return new ConCurrentHashMapSqlRegistry();
+	}
 	
+	/*
 	UpdatableSqlRegistry sqlRegistry;
 
 	@Before
@@ -49,7 +46,7 @@ public class ConcurrentHashMap {
 		sqlmap.put("KEY1", "Modifued1");
 		sqlmap.put("KEY3", "Modifued3");
 		
-		sqlRegistry.updateSql(sqlmap);
+		sqlRegistry.updateDql(sqlmap);
 		checkFindResult("Modifued1", "SQL2", "Modifued3");
 	}
 	
@@ -57,4 +54,5 @@ public class ConcurrentHashMap {
 	public void updateWithNotExistingKey() {
 		sqlRegistry.updateSql("SQL123123", "Modifued2");
 	}
+	*/
 }
