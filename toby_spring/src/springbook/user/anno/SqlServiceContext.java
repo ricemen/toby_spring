@@ -28,7 +28,6 @@ public class SqlServiceContext {
 		sqlService.setSqlRegistry(sqlRegistry());
 		return sqlService;
 	}
-	
 	@Bean
 	public SqlRegistry sqlRegistry() {
 		EmbeddedDbSqlRegistry emdb = new EmbeddedDbSqlRegistry();
