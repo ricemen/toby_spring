@@ -296,12 +296,6 @@ public class UserServiceTest {
 		}
 	}
 	
-	private void checkLevel(User user, Level exectedLevel) {
-		User userUpdate = userDao.get(user.getId());
-		assertThat(userUpdate.getLevel(), is(exectedLevel));
-		
-	}
-	
 	static class MockMailSender implements MailSender {
 		
 		private List<String> requests = new ArrayList<>();

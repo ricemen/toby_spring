@@ -23,14 +23,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private MailSender mailSender;
 	
-	private UserLevelUpgradePolicy userLevelUpgradePolicy;
-
 	public void setUserDao(UserDao userDao) {
 		this.userDao = userDao;
-	}
-
-	public void setUserLevelUpgradePolicy(UserLevelUpgradePolicy userLevelUpgradePolicy) {
-		this.userLevelUpgradePolicy = userLevelUpgradePolicy;
 	}
 
 	public void setMailSender(MailSender mailSender) {
