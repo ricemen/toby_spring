@@ -15,14 +15,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
-import org.springframework.jdbc.support.SQLExceptionTranslator;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import springbook.user.anno.AppContext;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
@@ -31,7 +31,9 @@ import springbook.user.domain.User;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/test-applicationContext.xml")
+//@ContextConfiguration(locations="/test-applicationContext.xml")
+@ActiveProfiles("production") 
+@ContextConfiguration(classes=AppContext.class)
 //@DirtiesContext
 public class UserDaoTest {
 	
@@ -40,7 +42,7 @@ public class UserDaoTest {
 //	private ApplicationContext context;
 	
 	@Autowired
-	UserDao dao;
+	UserDao userDao;
 	
 	@Autowired
 	DataSource dataSource;
@@ -56,75 +58,85 @@ public class UserDaoTest {
 		this.user3 = new User("younseo", "Á¶À±¼­", "choyounseo@gmail.com", "cho", Level.GOLD, 100, 40);
 	}
 	
+	@Autowired
+	DefaultListableBeanFactory bf;
+	
+	@Test
+	public void beans() {
+		for(String n : bf.getBeanDefinitionNames()) {
+			System.out.println(n + " \t" + bf.getBean(n).getClass().getName());
+		}
+	}
+	
 	@Test
 	public void addAndGet() throws SQLException {
 		
-		dao.deleteAll();
-		assertThat(dao.getCount(), is(0));
+		userDao.deleteAll();
+		assertThat(userDao.getCount(), is(0));
 		
-		dao.add(user1);
-		dao.add(user2);
-		dao.add(user3);
-		assertThat(dao.getCount(), is(3));
+		userDao.add(user1);
+		userDao.add(user2);
+		userDao.add(user3);
+		assertThat(userDao.getCount(), is(3));
 		
-		User userget1 = dao.get(user1.getId());
+		User userget1 = userDao.get(user1.getId());
 		checkSameUser(userget1, user1);
 		
-		User userget2 = dao.get(user2.getId());
+		User userget2 = userDao.get(user2.getId());
 		checkSameUser(userget2, user2);
 		
-		User userget3 = dao.get(user3.getId());
+		User userget3 = userDao.get(user3.getId());
 		checkSameUser(userget3, user3);
 	}
 	
 	@Test
 	public void count() throws SQLException {
 		
-		dao.deleteAll();
-		assertThat(dao.getCount(), is(0));
+		userDao.deleteAll();
+		assertThat(userDao.getCount(), is(0));
 		
-		dao.add(user1);
-		assertThat(dao.getCount(), is(1));
+		userDao.add(user1);
+		assertThat(userDao.getCount(), is(1));
 		
-		dao.add(user2);
-		assertThat(dao.getCount(), is(2));
+		userDao.add(user2);
+		assertThat(userDao.getCount(), is(2));
 		
-		dao.add(user3);
-		assertThat(dao.getCount(), is(3));
+		userDao.add(user3);
+		assertThat(userDao.getCount(), is(3));
 		
 	}
 	
 	@Test(expected=EmptyResultDataAccessException.class)
 	public void getUserFailure() throws SQLException {
 		
-		dao.deleteAll();
+		userDao.deleteAll();
 		
-		assertThat(dao.getCount(), is(0));
+		assertThat(userDao.getCount(), is(0));
 		
-		dao.get("unknow_id");
+		userDao.get("unknow_id");
 	}
 	
 	@Test
 	public void getAll() throws SQLException {
 		// 1, 0, 2
-		dao.deleteAll();
+		userDao.deleteAll();
 		
-		List<User> users0 = dao.getAll();
+		List<User> users0 = userDao.getAll();
 		assertThat(users0.size(), is(0));
 		
-		dao.add(user1);
-		List<User> users1 = dao.getAll();
+		userDao.add(user1);
+		List<User> users1 = userDao.getAll();
 		assertThat(users1.size(), is(1));
 		checkSameUser(user1, users1.get(0));
 
-		dao.add(user2);
-		List<User> users2 = dao.getAll();
+		userDao.add(user2);
+		List<User> users2 = userDao.getAll();
 		assertThat(users2.size(), is(2));
 		checkSameUser(user2, users2.get(0));
 		checkSameUser(user1, users2.get(1));
 
-		dao.add(user3);
-		List<User> users3 = dao.getAll();
+		userDao.add(user3);
+		List<User> users3 = userDao.getAll();
 		assertThat(users3.size(), is(3));
 		checkSameUser(user2, users3.get(0));
 		checkSameUser(user1, users3.get(1));		
@@ -133,28 +145,28 @@ public class UserDaoTest {
 	
 	@Test
 	public void update() {
-		dao.deleteAll();
-		dao.add(user1);
-		dao.add(user2);
+		userDao.deleteAll();
+		userDao.add(user1);
+		userDao.add(user2);
 		user1.setName("Á¶¿øÃ¶");
 		user1.setPassword("cwc");
 		user1.setLevel(Level.GOLD);
 		user1.setLogin(1000);
 		user1.setRecommend(999);
-		dao.update(user1);
+		userDao.update(user1);
 		
-		User userupdate = dao.get(user1.getId());
+		User userupdate = userDao.get(user1.getId());
 		checkSameUser(userupdate, user1);
-		User userget2 = dao.get(user2.getId());
+		User userget2 = userDao.get(user2.getId());
 		checkSameUser(userget2, user2);
 	}
 	
 	@Test(expected=DataAccessException.class)
 	public void duplicateKey() {
-		dao.deleteAll();
+		userDao.deleteAll();
 		
-		dao.add(user1);
-		dao.add(user1);
+		userDao.add(user1);
+		userDao.add(user1);
 	}
 	
 //	@Test

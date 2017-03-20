@@ -25,6 +25,7 @@ import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -32,12 +33,15 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import springbook.user.anno.AppContext;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/test-applicationContext.xml")
+//@ContextConfiguration(locations="/test-applicationContext.xml")
+@ActiveProfiles("test") 
+@ContextConfiguration(classes=AppContext.class)
 public class UserServiceTest {
 	
 	@Autowired
@@ -51,9 +55,6 @@ public class UserServiceTest {
 	
 	@Autowired
 	UserService testUserService;
-	
-	@Autowired
-	UserLevelUpgradePolicy userLevelUpgradePolicy;
 	
 	@Autowired
 	PlatformTransactionManager transactionManager;
@@ -228,7 +229,7 @@ public class UserServiceTest {
 		finally {
 			transactionManager.rollback(txStatus);
 		}
-		assertThat(userDao.getCount(), is(5));
+		assertThat(userDao.getCount(), is(2));
 		
 	}
 	@Test
@@ -256,7 +257,7 @@ public class UserServiceTest {
 //		assertThat(userDao.getCount(), is(2));
 	}
 	
-	static class TestUserService extends UserServiceImpl {
+	public static class TestUserService extends UserServiceImpl {
 		
 		private String id = "madnite1";
 /*
@@ -320,8 +321,6 @@ public class UserServiceTest {
 
 		@Override
 		public void send(SimpleMailMessage[] arg0) throws MailException {
-			// TODO Auto-generated method stub
-			
 		}
 		
 	}

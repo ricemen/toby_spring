@@ -10,8 +10,11 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
@@ -21,10 +24,12 @@ import springbook.user.sqlservice.SqlService;
  * @author wonseok
  *
  */
+@Repository
 public class UserDaoJdbc implements UserDao {
 
 	private JdbcTemplate jdbcTemplate;
 	
+	@Autowired
 	private SqlService sqlService;
 	
 	private RowMapper<User> userMapper = new RowMapper<User>() {
@@ -44,13 +49,14 @@ public class UserDaoJdbc implements UserDao {
 		
 	};
 	
+	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
-
-	public void setSqlService(SqlService sqlService) {
-		this.sqlService = sqlService;
-	}
+//
+//	public void setSqlService(SqlService sqlService) {
+//		this.sqlService = sqlService;
+//	}
 
 
 	public void add(final User user) {
