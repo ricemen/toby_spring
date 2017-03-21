@@ -39,11 +39,11 @@
 		<jdbc:script location="classpath:springbook/user/sqlservice/sqlRegistrySchema.sql" />
 	</jdbc:embedded-database>
 
-<!-- 	
+	
 	<aop:config>
 		<aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)" />
 	</aop:config>
-	
+ 
 	<tx:advice id="transactionAdvice">
 		<tx:attributes>
 			<tx:method name="get*" read-only="true"/>
@@ -51,7 +51,7 @@
 		</tx:attributes> 
 	</tx:advice>	
 
- 
+ 	<!--
  
  	<bean id="sqlService" class="springbook.user.sqlservice.DefaultSqlService" />
  -->
